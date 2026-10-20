@@ -1,6 +1,6 @@
 # Vendor Access Review Automation
 
-**Status:** deployed October 2026; unattended scheduled operation pending final approval.
+**Status:** deployed October 2026; the scheduled task and its first run as its service account are pending, then final approval for unattended operation.
 **Stack:** PowerShell (Windows PowerShell 5.1 compatible), Active Directory, Microsoft Graph, Entra ID, Exchange Online, Windows Task Scheduler.
 
 ## Problem
@@ -24,13 +24,13 @@ The organization's existing audit platform was the first route. Its logon record
 - **Mocked end-to-end suite** (PowerShell 7 with mock Active Directory, Graph and certificate-store modules): 23 recorded test results across two rounds, covering an unreachable domain controller, a missing or expiring certificate, Graph 403 and sign-in failures, an empty OU, a same-minute rerun, log retention that deletes only its own files, and 10,000 accounts against Graph's 3 MB attachment limit.
 - **Static analysis:** PSScriptAnalyzer with Windows PowerShell 5.1 compatibility profiles for Server 2016 and 2019.
 - **Defects caught before deployment:** a format-string bug in the report header, unsafe property reads under strict mode, rounding in "days since last logon", and a function name that collided with a built-in cmdlet in some PowerShell versions.
-- **Preflight checker:** a separate read-only script, run on the real server as the task's own account, that checks PowerShell and .NET versions, execution policy and Group Policy, downloaded-file marks, module visibility, folder rights, every domain controller, the certificate's private key, outbound HTTPS and an optional Graph sign-in.
+- **Preflight checker:** a separate read-only script, designed to run on the real server as the task's own account (so far run as the deployer), that checks PowerShell and .NET versions, execution policy and Group Policy, downloaded-file marks, module visibility, folder rights, every domain controller, the certificate's private key, outbound HTTPS and an optional Graph sign-in.
 
 ## Deployment
 - Step-confirmed rollout: each step's output checked before the next.
 - File hashes verified against the tested build.
 - Script folder restricted to administrators and SYSTEM; permissions audited during deployment.
-- Verified live: report run against the real directory (account count matched an independent query), Graph sign-in with the certificate, and a test email delivered to the IT distribution list.
+- Verified live, under the deployer's account: report run against the real directory (account count matched an independent query), Graph sign-in with the certificate, and a test email delivered to the IT distribution list.
 - Security checks: certificate private key confirmed non-exportable; interactive sign-in blocked on the sender mailbox's account.
 - Windows behaviours that break scheduled scripts, researched and documented: S4U ("Do not store password") tasks have no network access, Group Policy execution policy overrides `-ExecutionPolicy`, Mark of the Web blocks downloaded scripts under RemoteSigned, and the PowerShell Gallery requires TLS 1.2.
 - Certificate renewal procedure with zero-downtime overlap and rollback.
@@ -46,9 +46,9 @@ Each draft of the operations guide went to an independent AI reviewer working on
 - Proving the audit tool could not do it before pivoting.
 - Why `lastLogon` must be read from every domain controller.
 - How the mail permission was scoped, and why the obvious Entra ID permission would have been a security hole.
-- The silent-failure gap (a broken email path cannot report itself) and how it is mitigated.
+- The silent-failure gap: a broken email path cannot report its own failure.
 
 ## Skills
 PowerShell automation for Windows Server (5.1 compatibility, strict mode, error handling, logging, exit codes) · Active Directory internals · Microsoft Graph and Entra ID app registration with certificate authentication · Exchange Online RBAC for Applications · Task Scheduler and Windows security contexts · Test design with mocks, static analysis and preflight checks · Change discipline · Technical writing for technicians and leadership
 
-The script itself was written on the job and belongs to the employer, so it is not published here.
+The script was written on the job and is treated as the employer's property, so it is not published here.
