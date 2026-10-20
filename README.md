@@ -8,6 +8,4 @@ Each case study covers the problem, the design decisions and why I made them, ho
 
 | Project | Summary | Skills |
 |---|---|---|
-| [Vendor Access Review Automation](case-studies/vendor-access-review/) | Monthly report of every vendor account's last sign-in in Active Directory, grouped by vendor and emailed through Microsoft Graph with certificate authentication and mailbox-scoped permissions. | PowerShell, Active Directory, Microsoft Graph, Entra ID, Exchange Online RBAC, Task Scheduler, test design |
-
-Some projects were built with an AI assistant (Claude) as a pair engineer.
+| [Vendor Access Review Automation](case-studies/vendor-access-review/) | Monthly report (scheduling pending) of every vendor account's last sign-in in Active Directory, grouped by vendor and emailed through Microsoft Graph with certificate authentication and mailbox-scoped permissions. | PowerShell, Active Directory, Microsoft Graph, Entra ID, Exchange Online RBAC, Task Scheduler, test design |
