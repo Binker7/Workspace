@@ -2,7 +2,7 @@
 
 Write-ups of systems I have designed, built and deployed as an IT administrator.
 
-Each case study covers the problem, the design decisions and why I made them, how I tested the system, and how it was deployed and documented. They are sanitized: no organization names, hostnames, IP addresses, tenant or application IDs, account names, configuration exports or regulated data. Where code is included, it is a generalized version with placeholders in place of every real setting, and a README on how to use it.
+Each case study covers the problem, the design decisions and why I made them, how I tested the system, and how it was deployed and documented. They are sanitized: no organization names, hostnames, IP addresses, tenant or application IDs, account names, configuration exports or regulated data. Where code is included, it is a generalized version with placeholders in place of every real setting, and a README on how to use it. Code is released under the MIT License (see the `LICENSE` file next to it) and provided as is, without warranty. The write-ups themselves are not licensed for reuse. Everything here is published in a personal capacity and is not affiliated with or endorsed by any employer.
 
 ## Case studies
 

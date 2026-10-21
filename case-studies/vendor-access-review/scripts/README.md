@@ -266,3 +266,9 @@ The report script calls only standard cmdlets (`Get-ADUser`, `Get-ADDomainContro
 - Only user accounts are reported, not computers or service principals.
 - `lastLogon` records interactive and network logons against Active Directory. Sign-ins that never touch a domain controller (for example cloud-only sign-ins to Microsoft 365) do not appear.
 - The report is a point-in-time snapshot; it does not keep history beyond the retained HTML files.
+
+## Licence and disclaimer
+
+The scripts in this folder are released under the [MIT License](LICENSE). They are provided as is, without warranty of any kind, and the author accepts no liability for their use. Read them, and test them against a lab or a test OU, before running them anywhere that matters.
+
+They were written and are published in a personal capacity. They are not affiliated with, endorsed by or supported by any employer.
