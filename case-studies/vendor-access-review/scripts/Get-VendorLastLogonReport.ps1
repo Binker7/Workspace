@@ -8,7 +8,8 @@
 
     1. Reads every user account under -SearchBase (all depths).
     2. Queries lastLogon on EVERY domain controller (the attribute does not replicate) and takes
-       the newest value. Falls back to lastLogonTimestamp if a DC cannot be reached.
+       the newest of those values and the replicated lastLogonTimestamp, so a DC that cannot be
+       reached is covered by lastLogonTimestamp.
     3. Groups accounts by the OU directly beneath -SearchBase (the vendor). Accounts in deeper
        sub-OUs roll up to their vendor and show the sub-OU in a column. Accounts sitting directly
        in -SearchBase get their own section.

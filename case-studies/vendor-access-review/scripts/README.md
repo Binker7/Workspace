@@ -91,7 +91,7 @@ On a Windows client, install RSAT through **Settings > Optional features** inste
 
 1. Put both scripts in one folder and set `$SearchBase` and `$OutputFolder` as in the quick start.
 2. Run `Unblock-File` on both scripts if they were downloaded.
-3. Restrict the folder. A new folder under `C:\` inherits Modify for Authenticated Users, and anyone who can edit the script can run code as the task's account. Remove inheritance and keep only administrators and SYSTEM:
+3. Restrict the folder. A new folder under `C:\` inherits rights that let ordinary users add files (on Windows clients, Modify for Authenticated Users), and anyone who can change the folder's contents can run code as the task's account. Remove inheritance and keep only administrators and SYSTEM:
 
    ```powershell
    icacls C:\Scripts\VendorLogonReport /inheritance:r /grant:r "Administrators:(OI)(CI)F" "SYSTEM:(OI)(CI)F"
@@ -111,7 +111,8 @@ On a Windows client, install RSAT through **Settings > Optional features** inste
 Use a group managed service account (gMSA) if you can: Windows manages its password and nobody can sign in with it. Otherwise use a dedicated service account with a long password.
 
 ```powershell
-# Once per domain, if gMSAs have never been used there (Domain Admins; takes effect after replication)
+# Once per domain, if gMSAs have never been used there (Domain Admins). Domain controllers can take
+# up to 10 hours to accept the new key: wait, and let it replicate, before creating the gMSA.
 Add-KdsRootKey -EffectiveImmediately
 
 # Create the gMSA and allow this server's computer account to use it
@@ -153,7 +154,7 @@ Without this, sign-in fails with "Keyset does not exist" even though the certifi
 
 You need the ExchangeOnlineManagement module (`Install-Module ExchangeOnlineManagement`) and the Exchange Administrator role, plus a role that can create app registrations in Entra ID (for example Application Administrator).
 
-1. Create the sender mailbox if you do not have one. A shared mailbox needs no licence and no password: `New-Mailbox -Shared -Name 'Vendor Review' -PrimarySmtpAddress 'vendor-review@yourdomain.com'` (Exchange Online PowerShell).
+1. Create the sender mailbox if you do not have one. A shared mailbox needs no licence (up to 50 GB, without an archive or litigation hold) and no password you manage: `New-Mailbox -Shared -Name 'Vendor Review' -PrimarySmtpAddress 'vendor-review@yourdomain.com'` (Exchange Online PowerShell).
 2. In the Microsoft Entra admin center, create an **App registration** (single tenant, no redirect URI).
 3. Under **Certificates & secrets** > **Certificates**, upload `VendorAccountReview.cer`.
 4. Note the **Application (client) ID** and **Directory (tenant) ID**, and, from **Enterprise applications**, the app's **Object ID**. The Enterprise applications Object ID is different from the one shown under App registrations.
