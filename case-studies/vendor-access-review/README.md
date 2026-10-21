@@ -15,7 +15,7 @@ The organization's existing audit platform was the first route. Its logon record
 | Accurate last logon | Query `lastLogon` on every domain controller and take the newest, combined with `lastLogonTimestamp` | `lastLogon` does not replicate; `lastLogonTimestamp` can lag by up to 14 days |
 | One list per vendor | Group by the OU directly under the parent OU; deeper sub-OUs roll up with a Sub-OU column | Each vendor's section can be copied out and sent on its own |
 | Output | One HTML report with a heading and table per vendor | Pastes cleanly into Outlook; no Office needed on the server |
-| Email | Microsoft Graph `sendMail`, app-only, certificate authentication | `Send-MailMessage` is obsolete, and no password is stored anywhere |
+| Email | Microsoft Graph `sendMail`, app-only, certificate authentication | `Send-MailMessage` is obsolete, and no Graph password or client secret is stored |
 | Least privilege | Exchange Online RBAC for Applications scopes the app to one dedicated sender mailbox; no `Mail.Send` grant in Entra ID | An Entra ID grant would let the app send as any mailbox. Exchange's authorization test confirmed the sender in scope and a comparison mailbox out of scope |
 | Safety | Read-only against Active Directory; never disables or deletes accounts | Removal stays a deliberate human change after vendor review |
 | Failure visibility | Exit codes for Task Scheduler, a log per run, a failure email, refusal to send an empty report, warnings when a domain controller is unreachable or the certificate is within 30 days of expiry | A scheduled job that fails silently is worse than none |
@@ -24,7 +24,7 @@ The organization's existing audit platform was the first route. Its logon record
 - **Mocked end-to-end suite** (PowerShell 7 with mock Active Directory, Graph and certificate-store modules): 23 recorded test results across two rounds (mocked runs plus static compatibility and encoding checks), covering an unreachable domain controller, a missing or expiring certificate, Graph 403 and sign-in failures, an empty OU, a same-minute rerun, log retention that deletes only its own files, and 10,000 accounts against Graph's 3 MB attachment limit.
 - **Static analysis (part of the 23):** PSScriptAnalyzer with Windows PowerShell 5.1 compatibility profiles for Server 2016 and 2019.
 - **Defects caught before deployment:** a format-string bug in the report header, unsafe property reads under strict mode, rounding in "days since last logon", and a function name that collided with a built-in cmdlet in some PowerShell versions.
-- **Preflight checker:** a separate read-only script, designed to run on the real server as the task's own account (so far run as the deployer), that checks PowerShell and .NET versions, execution policy and Group Policy, downloaded-file marks, module visibility, folder rights, every domain controller, the certificate's private key, outbound HTTPS and an optional Graph sign-in.
+- **Preflight checker:** a separate script that changes nothing beyond creating its folders, a temporary test file and its own log, designed to run on the real server as the task's own account (so far run as the deployer), that checks PowerShell and .NET versions, execution policy and Group Policy, downloaded-file marks, module visibility, folder rights, every domain controller, the certificate's private key, outbound port 443 to Microsoft 365 and an optional Graph sign-in.
 
 ## Deployment
 - Step-confirmed rollout: each step's output checked before the next.
@@ -51,4 +51,7 @@ Each draft of the operations guide went to an independent AI reviewer working on
 ## Skills
 PowerShell automation for Windows Server (5.1 compatibility, strict mode, error handling, logging, exit codes) · Active Directory internals · Microsoft Graph and Entra ID app registration with certificate authentication · Exchange Online RBAC for Applications · Task Scheduler and Windows security contexts · Test design with mocks, static analysis and preflight checks · Change discipline · Technical writing for technicians
 
-The script was written on the job and is treated as the employer's property, so it is not published here.
+## Code
+The two scripts are published in generalized form, with placeholders in place of every real setting: [scripts/](scripts/). Their README covers setup, scheduling and troubleshooting for anyone who wants to run them.
+
+The published version differs from the deployed build in its placeholder defaults, a guard that stops while a placeholder is still set, comment and message wording (including the label for accounts sitting directly in the search base and the preflight's references to setup steps), and one robustness fix (the search base is normalized to the form Active Directory returns). It was re-run against mocks after those changes; the test results above are for the deployed build, and the test harness is not published.
